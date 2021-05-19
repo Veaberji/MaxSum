@@ -3,9 +3,25 @@ using System.Collections.Generic;
 
 namespace MaxSum
 {
-    class Output
+    public class UserInteraction
     {
-        public static void MaxSumContent(int maxSumLine, List<int> defectiveLines)
+        public static string SelectPath(string[] args)
+        {
+            if (args.Length > 0)
+                return args[0];
+
+            return InputPath();
+        }
+
+        public static string InputPath()
+        {
+            Console.Write("Enter the path to a file \n>>> ");
+            string path = Console.ReadLine();
+
+            return path;
+        }
+
+        public static void OutputMaxSumContent(int maxSumLine, List<int> defectiveLines)
         {
             if (maxSumLine == 0)
                 Console.WriteLine("The file doesn't contain any supported data");

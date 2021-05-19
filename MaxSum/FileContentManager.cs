@@ -9,7 +9,10 @@ namespace MaxSum
         private List<int> _defectiveLines;
         private string _path;
         private string[] _fileLines;
-        private bool isLinesCheked;
+        private bool _isLinesChecked;
+        private List<double> _lineNumbers;
+        private double? _sum;
+        private int _maxSumLine;
 
         public FileContentManager(string path)
         {
@@ -17,6 +20,10 @@ namespace MaxSum
             Check.Path(path);
             _path = path;
             _fileLines = File.ReadAllLines(_path);
+            _isLinesChecked = false;
+            _lineNumbers = new List<double>();
+            _sum = null;
+            _maxSumLine = 0;
         }
 
         public FileContentManager(string[] array)
@@ -24,63 +31,49 @@ namespace MaxSum
             _defectiveLines = new List<int>();
             Check.Array(array);
             _fileLines = array;
+            _isLinesChecked = false;
+            _lineNumbers = new List<double>();
+            _sum = null;
+            _maxSumLine = 0;
         }
 
         public int GetMaxSumLine()
         {
-            var lineNumbers = new List<double>();
-            double? sum = null;
-            int maxSumLine = 0;
-
             GetDefectiveLines();
+
+            return _maxSumLine;
+        }
+
+        public List<int> GetDefectiveLines()
+        {
+            if (_isLinesChecked)
+                return _defectiveLines;
 
             for (int i = 0; i < _fileLines.Length; i++)
             {
-                if (_defectiveLines.Contains(i + 1))
-                    continue;
-
                 var line = _fileLines[i].Split(",");
 
                 for (int j = 0; j < line.Length; j++)
                 {
                     bool isNumber = double.TryParse(line[j].Replace('.', ','), out double number);
+                    _lineNumbers.Add(number);
 
-                    lineNumbers.Add(number);
-                }
-
-                if (!sum.HasValue && lineNumbers.Count > 0 || sum < lineNumbers.Sum())
-                {
-                    sum = lineNumbers.Sum();
-                    maxSumLine = i + 1;
-                    lineNumbers.Clear();
-                }
-            }
-
-            return maxSumLine;
-        }
-
-        public List<int> GetDefectiveLines()
-        {
-            if (!isLinesCheked)
-            {
-                for (int i = 0; i < _fileLines.Length; i++)
-                {
-                    var line = _fileLines[i].Split(",");
-
-                    for (int j = 0; j < line.Length; j++)
+                    if (!isNumber)
                     {
-                        bool isNumber = double.TryParse(line[j].Replace('.', ','), out double number);
-
-                        if (!isNumber)
-                        {
-                            _defectiveLines.Add(i + 1);
-                            break;
-                        }
+                        _defectiveLines.Add(i + 1);
+                        _lineNumbers.Clear();
+                        break;
                     }
                 }
-            }
 
-            isLinesCheked = true;
+                if (!_sum.HasValue && _lineNumbers.Count > 0 || _sum < _lineNumbers.Sum())
+                {
+                    _sum = _lineNumbers.Sum();
+                    _maxSumLine = i + 1;
+                    _lineNumbers.Clear();
+                }
+            }
+            _isLinesChecked = true;
             return _defectiveLines;
         }
     }

@@ -8,13 +8,13 @@ namespace MaxSum
         {
             try
             {
-                string path = Selector.SelectPath(args);
+                string path = UserInteraction.SelectPath(args);
                 var manager = new FileContentManager(path);
 
                 var defectiveLines = manager.GetDefectiveLines();
                 int maxSumLine = manager.GetMaxSumLine();
 
-                Output.MaxSumContent(maxSumLine, defectiveLines);
+                UserInteraction.OutputMaxSumContent(maxSumLine, defectiveLines);
 
             }
             catch (Exception e)
